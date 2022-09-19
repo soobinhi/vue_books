@@ -1,17 +1,7 @@
 <template>
 <v-app>
   <v-container>
-     <v-card-title>
-        <v-btn class="indigo white--text" @click="$router.replace('/order/list')">입고요청목록</v-btn>
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="검색"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-card-title>
+    <v-text-field v-model="search" single-line></v-text-field>
     <v-data-table
             @click:row="handleClick"
             style="width: 100%"
@@ -20,17 +10,15 @@
             :items-per-page="5"
             :search="search"
             sort-by="id"
-            sort-desc="true">
-  
+            sort-desc="true">>
      <template v-slot:top>
-      
         <v-dialog
           v-model="dialog"
           max-width="500px"
         >
           <v-card>
             <v-card-title>
-              <span class="text-h5">도서 상세</span>
+              <span class="text-h5">주문 상세</span>
             </v-card-title>
             
             <v-card-text>
@@ -53,8 +41,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.author"
-                      label="작가"
+                      v-model="detailItem.order_date"
+                      label="주문일"
                       readonly="readonly" 
                       
                     ></v-text-field>
@@ -65,8 +53,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.publisher"
-                      label="출판사"
+                      v-model="detailItem.user_id"
+                      label="요청자"
                       readonly="readonly" 
                     ></v-text-field>
                   </v-col>
@@ -76,8 +64,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.isbn"
-                      label="ISBN"
+                      v-model="detailItem.reason"
+                      label="신청사유"
                       readonly="readonly" 
                     ></v-text-field>
                   </v-col>
@@ -87,8 +75,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.book_status"
-                      label="도서상태"
+                      v-model="detailItem.order_status"
+                      label="주문상태"
                       readonly="readonly" 
                     ></v-text-field>
                   </v-col>
@@ -108,7 +96,7 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="rental"
+                @click="save"
               >
                 {{btnvalue}}
               </v-btn>
@@ -128,12 +116,13 @@
     data: () => ({
       dialog: false,
       search: '',
-      btnvalue:'대출',
+      btnvalue:'승인',
       headers: [
         { text: '번호', value: 'id' },
         { text: '제목', value: 'title' },
-        { text: '작가', value: 'author' },
-        { text: '책 상태', value: 'book_status' }
+        { text: '주문일', value: 'order_date', dataType: "Date" },
+        { text: '주문상태', value: 'order_status' },
+        { text: '주문자', value: 'user_id' }
       ],
       contents:[],
       detailItem:[],
@@ -143,17 +132,18 @@
     },
     methods:{
       async getData(){
-        await this.$axios.get('http://127.0.0.1:8000/book/book/').then((response) => { 
+        await this.$axios.get('http://127.0.0.1:8000/order/').then((response) => { 
             for(var i=0;i<response.data.length;i++){
-                var status = response.data[i].book_status;
+                var status = response.data[i].order_status;
+                response.data[i].order_date = new Date(response.data[i].order_date).toLocaleString();
                 if(status=='1'){
-                    response.data[i].book_status = '대출가능';
+                    response.data[i].order_status = '승인대기';
                 }else if(status=='0'){
-                    response.data[i].book_status = '대출중';
+                    response.data[i].order_status = '반려';
                 }else if(status=='2'){
-                    response.data[i].book_status = '반납지연';
+                    response.data[i].order_status = '승인';
                 }else{
-                    response.data[i].book_status = '대출중';
+                    response.data[i].order_status = '입고완료';
                 }
             }
             this.contents = response.data;
@@ -164,31 +154,15 @@
         this.dialog = true;
     },close () {
         this.dialog = false
-        this.$nextTick(() => {
+      },save(){
+        this.$axios.get('http://127.0.0.1:8000/order/status/'+this.detailItem.id).then((response) => {
+          console.log(response.status);  
+          if(response.status=='200'){
+            this.getData()
+            alert('결재가 완료되었습니다.');
+            this.dialog = false
+          }
         })
-      },rental(){
-        let rentalData = {};
-        rentalData.user_id = this.$store.state.user_id;
-        rentalData.book_id = this.detailItem.id;
-        console.log(JSON.stringify(rentalData))
-        console.log(this.$store.state.token)
-        try {
-        this.$axios
-          .post("http://127.0.0.1:8000/book/rental/", JSON.stringify(rentalData), {
-            headers: {
-              "Content-Type": `application/json`,
-              "Authorization": `Token `+this.$store.state.token,
-            },
-          })
-          .then((res) => {
-            console.log(res)
-            if (res.status === 201) {
-              this.$router.go(this.$router.currentRoute)
-            }
-          });
-      } catch (error) {
-        console.error(error);
-      }
       }
     }
   }

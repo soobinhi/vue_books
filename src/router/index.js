@@ -1,29 +1,52 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Router from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import JoinView from '../views/JoinView.vue'
+import OrderView from '../views/OrderView.vue'
+import OrderListView from '../views/OrderListView.vue'
+import AdminOrderListView from '../views/AdminOrderList.vue'
+import BookRegister from '../views/BookRegister.vue'
 
-Vue.use(VueRouter)
+Vue.use(Router)
 
-const routes = [
+export default new Router({
+  mode: 'history',
+  routes: [
   {
     path: '/',
+    name: 'Login',
+    component: LoginView
+  },
+  {
+    path: '/join',
+    name: 'Join',
+    component: JoinView
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    component: OrderView
+  },
+  {
+    path: '/order/list',
+    name: 'OrderList',
+    component: OrderListView
+  },
+  {
+    path: '/home',
     name: 'home',
     component: HomeView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
-
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+    path: '/admin/orderlist',
+    name: 'AdminOrderList',
+    component: AdminOrderListView
+  },
+  {
+    path: '/admin/bookregister',
+    name: 'BookRegister',
+    component: BookRegister
+  },
+  ]
 })
-
-export default router
