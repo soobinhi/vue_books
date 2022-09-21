@@ -7,6 +7,8 @@ import OrderView from '../views/OrderView.vue'
 import OrderListView from '../views/OrderListView.vue'
 import AdminOrderListView from '../views/AdminOrderList.vue'
 import BookRegister from '../views/BookRegister.vue'
+import AdminBookRental from '../views/AdminBookRental.vue'
+import MyBookRental from '../views/BookRental.vue'
 
 Vue.use(Router)
 
@@ -47,6 +49,16 @@ export default new Router({
     path: '/admin/bookregister',
     name: 'BookRegister',
     component: BookRegister
+  },
+  {
+    path: '/admin/rental',
+    name: 'AdminBookRental',
+    component: AdminBookRental
+  },
+  {
+    path: '/my/rental',
+    name: 'MyBookRental',
+    component: MyBookRental
   },
   ]
 })

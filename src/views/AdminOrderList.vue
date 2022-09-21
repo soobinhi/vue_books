@@ -1,7 +1,17 @@
 <template>
 <v-app>
   <v-container>
-    <v-text-field v-model="search" single-line></v-text-field>
+    <v-card-title>
+    <v-icon>article</v-icon>&nbsp;주문목록
+        <v-spacer></v-spacer>
+    <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="검색"
+          single-line
+          hide-details
+        ></v-text-field>
+    </v-card-title>
     <v-data-table
             @click:row="handleClick"
             style="width: 100%"
@@ -122,7 +132,7 @@
         { text: '제목', value: 'title' },
         { text: '주문일', value: 'order_date', dataType: "Date" },
         { text: '주문상태', value: 'order_status' },
-        { text: '주문자', value: 'user_id' }
+        { text: '주문자', value: 'user_id.name' }
       ],
       contents:[],
       detailItem:[],

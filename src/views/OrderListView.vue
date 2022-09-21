@@ -2,7 +2,7 @@
 <v-app>
   <v-container>
     <v-card-title>
-        <v-btn class="indigo white--text" @click="$router.replace('/order/')">입고요청</v-btn>
+        <v-icon>article</v-icon>&nbsp;주문목록
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -36,7 +36,7 @@
         { text: '제목', value: 'title' },
         { text: '주문일', value: 'order_date'},
         { text: '주문상태', value: 'order_status' },
-        { text: '주문자', value: 'user_id' }
+        { text: '주문자', value: 'user_id.name' }
       ],
       contents:[],
     }),
@@ -46,6 +46,7 @@
     methods:{
       async getData(){
         await this.$axios.get('http://127.0.0.1:8000/order/').then((response) => { 
+            console.log(response.data)
              for(var i=0;i<response.data.length;i++){
                 var status = response.data[i].order_status;
                 response.data[i].order_date = new Date(response.data[i].order_date).toLocaleString();
