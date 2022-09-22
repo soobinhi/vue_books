@@ -9,6 +9,7 @@ import AdminOrderListView from '../views/AdminOrderList.vue'
 import BookRegister from '../views/BookRegister.vue'
 import AdminBookRental from '../views/AdminBookRental.vue'
 import MyBookRental from '../views/BookRental.vue'
+import MyBookReserve from '../views/BookReserve.vue'
 
 Vue.use(Router)
 
@@ -59,6 +60,11 @@ export default new Router({
     path: '/my/rental',
     name: 'MyBookRental',
     component: MyBookRental
+  },
+  {
+    path: '/my/reserve',
+    name: 'MyBookReserve',
+    component: MyBookReserve
   },
   ]
 })

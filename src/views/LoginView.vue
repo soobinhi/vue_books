@@ -53,11 +53,18 @@
 <script>
 /* eslint-disable */
 export default {
+  
+  
   data() {
     return {
       user_id: null,
       password: null
     };
+  },
+  created(){
+    if(this.$store.state.user_id != '' && this.$store.state.token !=''){
+    this.$router.replace('/home');
+  }
   },
   methods: {
     async loginSubmit() {

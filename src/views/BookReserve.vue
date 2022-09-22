@@ -2,7 +2,7 @@
 <v-app>
   <v-container>
      <v-card-title>
-        <v-icon>article</v-icon>&nbsp;나의 대여목록
+        <v-icon>article</v-icon>&nbsp;나의 예약목록
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -30,7 +30,7 @@
         >
           <v-card>
             <v-card-title>
-              <span class="text-h5">반납 / 연장</span>
+              <span class="text-h5">예약 내역</span>
             </v-card-title>
             
             <v-card-text>
@@ -53,7 +53,7 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.rental_date"
+                      v-model="detailItem.reserve_date"
                       label="대여일자"
                       readonly="readonly" 
                       
@@ -65,33 +65,12 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.scheduled_date"
-                      label="반납기한"
+                      v-model="detailItem.book_status"
+                      label="도서상태"
                       readonly="readonly" 
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <v-text-field
-                      v-model="detailItem.is_extension"
-                      label="연장여부"
-                      readonly="readonly" 
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <v-text-field
-                      v-model="detailItem.return_date"
-                      label="반납일"
-                      readonly="readonly" 
-                    ></v-text-field>
-                  </v-col>
+                  
                 </v-row>
               </v-container>
             </v-card-text>
@@ -101,24 +80,15 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="extension"
-              >
-                연장
-              </v-btn>
+                @click="rental">대여</v-btn>
               <v-btn
                 color="blue darken-1"
                 text
-                @click="book_return"
-              >
-                반납
-              </v-btn>
+                @click="del_reserve">예약취소</v-btn>
               <v-btn
                 color="blue darken-1"
                 text
-                @click="close"
-              >
-                닫기
-              </v-btn>
+                @click="close"> 닫기</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -139,10 +109,7 @@
       headers: [
         { text: '번호', value: 'book_id.id' },
         { text: '책 제목', value: 'book_id.title' },
-        { text: '대여일자', value: 'rental_date' },
-        { text: '반납일자', value: 'return_date' },
-        { text: '연장여부', value: 'is_extension' },
-        { text: '반납기한', value: 'scheduled_date' },
+        { text: '예약일자', value: 'reserve_date' },
         { text: '도서상태', value: 'book_id.book_status' },
       ],
       contents:[],
@@ -153,30 +120,19 @@
     },
     methods:{
       async getData(){
-        await this.$axios.get('http://127.0.0.1:8000/book/rental/?user_id='+this.$store.state.user_id).then((response) => { 
+        await this.$axios.get('http://127.0.0.1:8000/book/reserve/?user_id='+this.$store.state.user_id).then((response) => { 
           console.log(response.data)
             for(var i=0;i<response.data.length;i++){
-                let rent_date = new Date(response.data[i].rental_date)
-                response.data[i].rental_date = rent_date.toLocaleDateString();
-                rent_date.setDate(rent_date.getDate() + 21);
-                if(response.data[i].is_extension){
-                  rent_date.setDate(rent_date.getDate() + 7);
-                  response.data[i].is_extension = 'O';
-                }else{
-                  response.data[i].is_extension = 'X';
-                }
-                response.data[i].scheduled_date = rent_date.toLocaleDateString();
-                var status = response.data[i].book_id.book_status;
-                if(status=='1'){
+                response.data[i].reserve_date = new Date(response.data[i].reserve_date).toLocaleDateString();
+                 var status = response.data[i].book_id.book_status;
+                 if(status=='0'){
+                    response.data[i].book_id.book_status = '반납완료';
+                }else if(status=='1'){
                     response.data[i].book_id.book_status = '대여중';
+                }else if(status=='2'){
+                  response.data[i].book_id.book_status = '반납승인대기';
                 }else{
-                    response.data[i].book_id.book_status = '반납승인대기';
-                }
-                if(response.data[i].return_date != null){
-                  response.data[i].return_date = new Date(response.data[i].return_date).toLocaleDateString();
-                  response.data[i].book_id.book_status = '반납완료';
-                }else{
-                  response.data[i].return_date = '-'
+                  response.data[i].book_id.book_status = '대여가능';
                 }
             }
           this.contents = response.data;
@@ -186,12 +142,14 @@
         console.log(value)
         this.detailItem = value;
         this.detailItem.title = value.book_id.title;
+        this.detailItem.book_status = value.book_id.book_status;
         this.dialog = true;
     },close () {
         this.dialog = false
         this.$nextTick(() => {
         })
       },book_return(){
+        alert(this.detailItem.book_id.id)
         this.$axios.get('http://127.0.0.1:8000/book/return/'+this.detailItem.book_id.id).then((response) => {
           console.log(response.status);  
           if(response.status=='200'){
@@ -200,19 +158,15 @@
             this.dialog = false
           }
         })
-      },extension(){
-        if(this.detailItem.is_extension=='O'){
-          alert('연장은 1번만 가능합니다.');
-        }else{
-        this.$axios.get('http://127.0.0.1:8000/book/extension/'+this.detailItem.id).then((response) => {
+      },del_reserve(){
+        this.$axios.get('http://127.0.0.1:8000/book/del_reserve/'+this.detailItem.id).then((response) => {
           console.log(response.status);  
           if(response.status=='200'){
             this.getData()
-            alert('연장이 완료되었습니다.');
+            alert('예약취소가 완료되었습니다.');
             this.dialog = false
           }
         })
-        }
       }
     }
   }

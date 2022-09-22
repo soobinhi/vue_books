@@ -151,9 +151,9 @@
                 }else if(status=='1'){
                     response.data[i].book_status = '대여중';
                 }else if(status=='2'){
-                    response.data[i].book_status = '예약대기';
+                    response.data[i].book_status = '반납승인대기';
                 }else{
-                    response.data[i].book_status = '예약대기';
+                    response.data[i].book_status = '예약중';
                 }
             }
             this.contents = response.data;
@@ -173,12 +173,30 @@
         this.$nextTick(() => {
         })
       },rental(){
-        if(this.btnvalue == '예약'){
-          alert('기능 구현중');
-        }else{
-          let rentalData = {};
+        let rentalData = {};
           rentalData.user_id = this.$store.state.user_id;
           rentalData.book_id = this.detailItem.id;
+        if(this.btnvalue == '예약'){
+          try {
+          this.$axios
+            .post("http://127.0.0.1:8000/book/reserve/", JSON.stringify(rentalData), {
+              headers: {
+                "Content-Type": `application/json`,
+                "Authorization": `Token `+this.$store.state.token,
+              },
+            })
+            .then((res) => {
+              console.log(res)
+              if (res.status === 201) {
+                this.getData()
+                alert('예약이 완료되었습니다.');
+                this.dialog = false
+              }
+            });
+        } catch (error) {
+          console.error(error);
+        }
+        }else{
           try {
           this.$axios
             .post("http://127.0.0.1:8000/book/rental/", JSON.stringify(rentalData), {
@@ -190,7 +208,9 @@
             .then((res) => {
               console.log(res)
               if (res.status === 201) {
-                this.$router.go(this.$router.currentRoute)
+                this.getData()
+                alert('대여가 완료되었습니다.');
+                this.dialog = false
               }
             });
         } catch (error) {

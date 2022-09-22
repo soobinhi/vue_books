@@ -2,7 +2,7 @@
 <v-app>
   <v-container>
      <v-card-title>
-        <v-icon>article</v-icon>&nbsp;대여목록
+        <v-icon>article</v-icon>&nbsp;대여목록 관리
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -159,11 +159,6 @@
                 let rent_date = new Date(response.data[i].rental_date)
                 response.data[i].rental_date = rent_date.toLocaleDateString();
                 rent_date.setDate(rent_date.getDate() + 21);
-                if(response.data[i].return_date != null){
-                  response.data[i].return_date = new Date(response.data[i].return_date).toLocaleDateString();
-                }else{
-                  response.data[i].return_date = '-'
-                }
                 if(response.data[i].is_extension){
                   rent_date.setDate(rent_date.getDate() + 7);
                   response.data[i].is_extension = 'O';
@@ -172,12 +167,16 @@
                 }
                 response.data[i].scheduled_date = rent_date.toLocaleDateString();
                 var status = response.data[i].book_id.book_status;
-                 if(status=='0'){
-                    response.data[i].book_id.book_status = '반납완료';
-                }else if(status=='1'){
+                if(status=='1'){
                     response.data[i].book_id.book_status = '대여중';
                 }else{
                     response.data[i].book_id.book_status = '반납승인대기';
+                }
+                if(response.data[i].return_date != null){
+                  response.data[i].return_date = new Date(response.data[i].return_date).toLocaleDateString();
+                  response.data[i].book_id.book_status = '반납완료';
+                }else{
+                  response.data[i].return_date = '-'
                 }
             }
           this.contents = response.data;

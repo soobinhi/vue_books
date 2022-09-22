@@ -8,7 +8,7 @@
 				<v-app-bar-title style="color:white">도서관리시스템</v-app-bar-title>
 				<v-spacer></v-spacer>
 				<v-btn icon color="white" @click="$router.replace('/home/')">
-					대여
+					도서
 				</v-btn>
 				<v-menu offset-y>
 					<template v-slot:activator="{ on, attrs }">
@@ -45,7 +45,7 @@
 						<v-list-item @click="$router.replace('/my/rental/')">
 						<v-list-item-title>대여조회</v-list-item-title>
 						</v-list-item>
-						<v-list-item @click="$router.replace('/admin/orderlist/')">
+						<v-list-item @click="$router.replace('/my/reserve/')">
 						<v-list-item-title>예약목록</v-list-item-title>
 						</v-list-item>
 						<v-list-item @click="$router.replace('/order/list/')">
