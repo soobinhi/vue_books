@@ -65,8 +65,8 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.book_status"
-                      label="도서상태"
+                      v-model="detailItem.reserve_status"
+                      label="예약상태"
                       readonly="readonly" 
                     ></v-text-field>
                   </v-col>
@@ -80,11 +80,13 @@
               <v-btn
                 color="blue darken-1"
                 text
+                v-if="rental"
                 @click="rental">대여</v-btn>
               <v-btn
                 color="blue darken-1"
                 text
-                @click="del_reserve">예약취소</v-btn>
+                v-if="reserve_cancel"
+                @click="reserve_cancel">예약취소</v-btn>
               <v-btn
                 color="blue darken-1"
                 text
@@ -110,7 +112,8 @@
         { text: '번호', value: 'book_id.id' },
         { text: '책 제목', value: 'book_id.title' },
         { text: '예약일자', value: 'reserve_date' },
-        { text: '도서상태', value: 'book_id.book_status' },
+        { text: '예약상태', value: 'reserve_status' },
+        { text: '대여가능일', value: 'available_date' },
       ],
       contents:[],
       detailItem:[],
@@ -124,15 +127,19 @@
           console.log(response.data)
             for(var i=0;i<response.data.length;i++){
                 response.data[i].reserve_date = new Date(response.data[i].reserve_date).toLocaleDateString();
-                 var status = response.data[i].book_id.book_status;
-                 if(status=='0'){
-                    response.data[i].book_id.book_status = '반납완료';
-                }else if(status=='1'){
-                    response.data[i].book_id.book_status = '대여중';
-                }else if(status=='2'){
-                  response.data[i].book_id.book_status = '반납승인대기';
+                if(response.data[i].reserve_status == '0'){
+                  response.data[i].reserve_status = '예약중'
+                }else if (response.data[i].reserve_status == '1'){
+                  response.data[i].reserve_status = '예약취소'
+                }else if (response.data[i].reserve_status == '2'){
+                  response.data[i].reserve_status = '대여가능'
                 }else{
-                  response.data[i].book_id.book_status = '대여가능';
+                  response.data[i].reserve_status = '대여완료'
+                }
+                if(response.data[i].available_date != null){
+                  response.data[i].available_date = new Date(response.data[i].available_date).toLocaleDateString();
+                }else{
+                  response.data[i].available_date = '-'
                 }
             }
           this.contents = response.data;
@@ -142,7 +149,16 @@
         console.log(value)
         this.detailItem = value;
         this.detailItem.title = value.book_id.title;
-        this.detailItem.book_status = value.book_id.book_status;
+        if(value.reserve_status=='예약중'){
+          this.rental = false
+          this.reserve_cancel = true
+        }else if(value.reserve_status=='예약취소'||value.reserve_status=='대여완료'){
+          this.rental = false
+          this.reserve_cancel = false
+        }else{
+          this.rental = true
+          this.reserve_cancel = false
+        }
         this.dialog = true;
     },close () {
         this.dialog = false
@@ -158,8 +174,8 @@
             this.dialog = false
           }
         })
-      },del_reserve(){
-        this.$axios.get('http://127.0.0.1:8000/book/del_reserve/'+this.detailItem.id).then((response) => {
+      },reserve_cancel(){
+        this.$axios.get('http://127.0.0.1:8000/book/reserve_cancel/'+this.detailItem.id).then((response) => {
           console.log(response.status);  
           if(response.status=='200'){
             this.getData()
@@ -167,7 +183,30 @@
             this.dialog = false
           }
         })
-      }
+      },rental(){
+        let rentalData = {};
+        rentalData.user_id = this.$store.state.user_id;
+        rentalData.book_id = this.detailItem.book_id.id;
+          try {
+          this.$axios
+            .post("http://127.0.0.1:8000/book/rental/", JSON.stringify(rentalData), {
+              headers: {
+                "Content-Type": `application/json`,
+                "Authorization": `Token `+this.$store.state.token,
+              },
+            })
+            .then((res) => {
+              console.log(res)
+              if (res.status === 201) {
+                this.getData()
+                alert('대여가 완료되었습니다.');
+                this.dialog = false
+              }
+            });
+        } catch (error) {
+          console.error(error);
+        }
+        }
     }
   }
 </script>

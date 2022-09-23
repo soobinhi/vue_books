@@ -101,6 +101,7 @@
               <v-btn
                 color="blue darken-1"
                 text
+                v-if="extension"
                 @click="extension"
               >
                 연장
@@ -108,6 +109,7 @@
               <v-btn
                 color="blue darken-1"
                 text
+                v-if="book_return"
                 @click="book_return"
               >
                 반납
@@ -155,7 +157,7 @@
       async getData(){
         await this.$axios.get('http://127.0.0.1:8000/book/rental/?user_id='+this.$store.state.user_id).then((response) => { 
           console.log(response.data)
-            for(var i=0;i<response.data.length;i++){
+            for(let i=0;i<response.data.length;i++){
                 let rent_date = new Date(response.data[i].rental_date)
                 response.data[i].rental_date = rent_date.toLocaleDateString();
                 rent_date.setDate(rent_date.getDate() + 21);
@@ -178,6 +180,10 @@
                 }else{
                   response.data[i].return_date = '-'
                 }
+                let today = new Date();
+                if(today>rent_date&&response.data[i].return_date == '-'){
+                  response.data[i].book_id.book_status = '연체중';
+                }
             }
           this.contents = response.data;
       })
@@ -187,6 +193,16 @@
         this.detailItem = value;
         this.detailItem.title = value.book_id.title;
         this.dialog = true;
+        if(value.book_id.book_status=='연체중'){
+          this.extension= false
+          this.book_return = true
+        }else if(value.book_id.book_status=='대여중'){
+          this.extension = true
+          this.book_return = true
+        }else{
+          this.extension = false
+          this.book_return = false
+        }
     },close () {
         this.dialog = false
         this.$nextTick(() => {
@@ -213,6 +229,13 @@
           }
         })
         }
+      },getDateDiff(d1, d2){
+        const date1 = new Date(d1);
+        const date2 = new Date(d2);
+        
+        const diffDate = date1.getTime() - date2.getTime();
+        
+        return Math.abs(diffDate / (1000 * 60 * 60 * 24)); 
       }
     }
   }

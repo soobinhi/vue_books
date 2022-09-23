@@ -101,17 +101,18 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="close"
-              >
-                취소
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
                 @click="rental"
               >
                 {{btnvalue}}
               </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="close"
+              >
+                닫기
+              </v-btn>
+              
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -161,10 +162,10 @@
       },
       handleClick(value) {
         this.detailItem = value;
-        if(value.book_status == '대여중'){
-          this.btnvalue = '예약';
-        }else{
+        if(value.book_status == '대여가능'){
           this.btnvalue = '대여';
+        }else{
+          this.btnvalue = '예약';
         }
         this.dialog = true;
         

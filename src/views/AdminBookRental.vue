@@ -153,7 +153,7 @@
     },
     methods:{
       async getData(){
-        await this.$axios.get('http://127.0.0.1:8000/book/rental/?user_id='+this.$store.state.user_id).then((response) => { 
+        await this.$axios.get('http://127.0.0.1:8000/book/rental/').then((response) => { 
           console.log(response.data)
             for(var i=0;i<response.data.length;i++){
                 let rent_date = new Date(response.data[i].rental_date)
@@ -168,9 +168,9 @@
                 response.data[i].scheduled_date = rent_date.toLocaleDateString();
                 var status = response.data[i].book_id.book_status;
                 if(status=='1'){
-                    response.data[i].book_id.book_status = '대여중';
+                  response.data[i].book_id.book_status = '대여중';
                 }else{
-                    response.data[i].book_id.book_status = '반납승인대기';
+                  response.data[i].book_id.book_status = '반납승인대기';
                 }
                 if(response.data[i].return_date != null){
                   response.data[i].return_date = new Date(response.data[i].return_date).toLocaleDateString();

@@ -5,7 +5,7 @@
 				<v-btn icon>
 					<v-icon style="color:white" @click="$router.replace('/home')">home</v-icon>
 				</v-btn>
-				<v-app-bar-title style="color:white">도서관리시스템</v-app-bar-title>
+				<v-app-bar-title style="color:white">도서관리</v-app-bar-title>
 				<v-spacer></v-spacer>
 				<v-btn icon color="white" @click="$router.replace('/home/')">
 					도서
