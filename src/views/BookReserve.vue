@@ -13,7 +13,7 @@
         ></v-text-field>
       </v-card-title>
     <v-data-table
-            @click:row="handleClick"
+            
             style="width: 100%"
             :headers="headers"
             :items="contents"
@@ -81,7 +81,7 @@
                 color="blue darken-1"
                 text
                 v-if="rental"
-                @click="rental">대여</v-btn>
+                @click="fn_rental">대여</v-btn>
               <v-btn
                 color="blue darken-1"
                 text
@@ -160,19 +160,9 @@
           this.reserve_cancel = false
         }
         this.dialog = true;
-    },close () {
+      },close () {
         this.dialog = false
         this.$nextTick(() => {
-        })
-      },book_return(){
-        alert(this.detailItem.book_id.id)
-        this.$axios.get('http://127.0.0.1:8000/book/return/'+this.detailItem.book_id.id).then((response) => {
-          console.log(response.status);  
-          if(response.status=='200'){
-            this.getData()
-            alert('반납 신청이 완료되었습니다.');
-            this.dialog = false
-          }
         })
       },reserve_cancel(){
         this.$axios.get('http://127.0.0.1:8000/book/reserve_cancel/'+this.detailItem.id).then((response) => {
@@ -183,10 +173,11 @@
             this.dialog = false
           }
         })
-      },rental(){
+      },fn_rental(){
         let rentalData = {};
         rentalData.user_id = this.$store.state.user_id;
         rentalData.book_id = this.detailItem.book_id.id;
+        console.log(rentalData)
           try {
           this.$axios
             .post("http://127.0.0.1:8000/book/rental/", JSON.stringify(rentalData), {

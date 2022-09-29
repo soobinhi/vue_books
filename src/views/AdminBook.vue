@@ -129,9 +129,9 @@
     data: () => ({
       dialog: false,
       search: '',
-      btnvalue:'예약',
+      btnvalue:'대여',
       headers: [
-        { text: '번호', value: 'id' },
+        { text: '도서번호', value: 'id' },
         { text: '제목', value: 'title' },
         { text: '작가', value: 'author' },
         { text: '도서상태', value: 'book_status' }
@@ -161,9 +161,11 @@
       })
       },
       handleClick(value) {
+
+        this.$router.push("/admin/book/detail/"+value.id);
         this.detailItem = value;
         if(value.book_status == '대여가능'){
-          this.btnvalue = '';
+          this.btnvalue = '대여';
         }else{
           this.btnvalue = '예약';
         }

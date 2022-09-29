@@ -3,7 +3,7 @@
 		<div v-if ="$store.state.token">
 		<v-app-bar app color="indigo"  >
 				<v-btn icon>
-					<v-icon style="color:white" @click="$router.replace('/home')">home</v-icon>
+					<v-icon style="color:white" @click="$router.replace('/home/')">home</v-icon>
 				</v-btn>
 				<v-app-bar-title style="color:white">도서관리</v-app-bar-title>
 				<v-spacer></v-spacer>
@@ -63,11 +63,19 @@
 						v-on="on"
 						>
 						관리자
+						<p v-if="$store.state.rentalList.length>0">{{$store.state.rentalList.length}}</p>
 						</v-btn>
 					</template>
 					<v-list>
+						<v-list-item @click="$router.replace('/admin/book/')">
+						<v-list-item-title>도서관리</v-list-item-title>
+						</v-list-item>
+						<v-list-item @click="$router.replace('/admin/bookcart/')">
+						<v-list-item-title>대여장바구니
+						</v-list-item-title>
+						</v-list-item>
 						<v-list-item @click="$router.replace('/admin/rental/')">
-						<v-list-item-title>대여현황조회</v-list-item-title>
+						<v-list-item-title>대여목록관리</v-list-item-title>
 						</v-list-item>
 						<v-list-item @click="$router.replace('/admin/orderlist/')">
 						<v-list-item-title>도서주문목록</v-list-item-title>

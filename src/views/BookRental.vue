@@ -110,7 +110,7 @@
                 color="blue darken-1"
                 text
                 v-if="book_return"
-                @click="book_return"
+                @click="fn_book_return"
               >
                 반납
               </v-btn>
@@ -207,7 +207,7 @@
         this.dialog = false
         this.$nextTick(() => {
         })
-      },book_return(){
+      },fn_book_return(){
         this.$axios.get('http://127.0.0.1:8000/book/return/'+this.detailItem.book_id.id).then((response) => {
           console.log(response.status);  
           if(response.status=='200'){

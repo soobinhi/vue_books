@@ -11,14 +11,23 @@
           single-line
           hide-details
         ></v-text-field>
+        <v-btn
+                color="blue darken-1"
+                text
+                @click="checked_return"
+              >
+              반납
+        </v-btn>
       </v-card-title>
     <v-data-table
+            v-model="selected"
             @click:row="handleClick"
             style="width: 100%"
             :headers="headers"
             :items="contents"
             :items-per-page="5"
             :search="search"
+            show-select
             sort-by="id"
             sort-desc="true">
   
@@ -108,7 +117,7 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="rental"
+                @click="fn_return"
               >
                 반납처리
               </v-btn>
@@ -144,15 +153,18 @@
         { text: '연장여부', value: 'is_extension' },
         { text: '반납기한', value: 'scheduled_date' },
         { text: '도서상태', value: 'book_id.book_status' },
+        { text: '대여자', value: 'user_id.name'}
       ],
       contents:[],
       detailItem:[],
+      selected: [],
     }),
     created(){
       this.getData()
     },
     methods:{
       async getData(){
+        this.selected = [];
         await this.$axios.get('http://127.0.0.1:8000/book/rental/').then((response) => { 
           console.log(response.data)
             for(var i=0;i<response.data.length;i++){
@@ -178,6 +190,10 @@
                 }else{
                   response.data[i].return_date = '-'
                 }
+                let today = new Date();
+                if(today>rent_date&&response.data[i].return_date == '-'){
+                  response.data[i].book_id.book_status = '연체중';
+                }
             }
           this.contents = response.data;
       })
@@ -191,7 +207,7 @@
         this.dialog = false
         this.$nextTick(() => {
         })
-      },rental(){
+      },fn_return(){
         this.$axios.get('http://127.0.0.1:8000/book/complete/'+this.detailItem.id).then((response) => {
           console.log(response.status);  
           if(response.status=='200'){
@@ -200,7 +216,30 @@
             this.dialog = false
           }
         })
-      },extension(){
+        console.log(this.selected)
+      },
+      checked_return(){
+        console.log(this.selected)
+         try {
+          this.$axios
+            .post("http://127.0.0.1:8000/book/adminreturn/", JSON.stringify(this.selected), {
+              headers: {
+                "Content-Type": `application/json`,
+                "Authorization": `Token `+this.$store.state.token,
+              },
+            })
+            .then((res) => {
+              console.log(res)
+              if (res.status === 200) {
+                alert('반납이 완료되었습니다.');
+                this.getData()
+              }
+            });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+        extension(){
         if(this.detailItem.is_extension=='O'){
           alert('연장은 1번만 가능합니다.');
         }else{

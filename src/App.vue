@@ -17,6 +17,11 @@ export default {
   },  
   data: () => ({
     //
-  })
+  }),
+  created(){
+      if(this.$store.state.token==''){
+        this.$router.replace('/')
+      }
+  },
 }
 </script>

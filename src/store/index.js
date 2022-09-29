@@ -8,7 +8,8 @@ Vue.use(Vuex)
 
 const userStore = new Vuex.Store({
     state: {
-        token: ''
+        token: '',
+        rentalList : []
     },
     mutations: {
         login: function (state, payload) {
@@ -31,6 +32,10 @@ const userStore = new Vuex.Store({
             state.user_id=''
             state.is_admin=''
             
+        },addRentalList (state, rental) {
+            state.rentalList.push(rental)
+        },delRentalList(state){
+            state.rentalList=[]
         }
     },
     plugins: [createPersistedState({
