@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue'
 import JoinView from '../views/JoinView.vue'
 import OrderView from '../views/OrderView.vue'
 import OrderListView from '../views/OrderListView.vue'
+import MyOrderList from '../views/MyOrderList.vue'
 import AdminOrderListView from '../views/AdminOrderList.vue'
 import BookRegister from '../views/BookRegister.vue'
 import AdminBookRental from '../views/AdminBookRental.vue'
@@ -39,6 +40,11 @@ export default new Router({
     path: '/order/list',
     name: 'OrderList',
     component: OrderListView
+  },
+  {
+    path: '/my/orderlist',
+    name: 'MyOrderList',
+    component: MyOrderList
   },
   {
     path: '/home',

@@ -108,19 +108,14 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
+                v-if="extensionval"
                 color="blue darken-1"
                 text
                 @click="extension"
               >
                 연장
               </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="fn_return"
-              >
-                반납처리
-              </v-btn>
+              
               <v-btn
                 color="blue darken-1"
                 text
@@ -181,8 +176,6 @@
                 var status = response.data[i].book_id.book_status;
                 if(status=='1'){
                   response.data[i].book_id.book_status = '대여중';
-                }else{
-                  response.data[i].book_id.book_status = '반납승인대기';
                 }
                 if(response.data[i].return_date != null){
                   response.data[i].return_date = new Date(response.data[i].return_date).toLocaleDateString();
@@ -191,8 +184,12 @@
                   response.data[i].return_date = '-'
                 }
                 let today = new Date();
-                if(today>rent_date&&response.data[i].return_date == '-'){
-                  response.data[i].book_id.book_status = '연체중';
+                if(today>rent_date){
+                  if(response.data[i].return_date == '-'){
+                    response.data[i].book_id.book_status = '연체중';
+                  }else{
+                    response.data[i].return_date = response.data[i].return_date + ' (연체)'
+                  }
                 }
             }
           this.contents = response.data;
@@ -203,6 +200,16 @@
         this.detailItem = value;
         this.detailItem.title = value.book_id.title;
         this.dialog = true;
+        if(value.book_id.book_status=='연체중'){
+          this.extensionval = false
+          this.returnval = true
+        }else if(value.book_id.book_status=='반납완료'){
+          this.extensionval = false
+          this.returnval = false
+        }else{
+          this.extensionval = true
+          this.returnval = true
+        }
     },close () {
         this.dialog = false
         this.$nextTick(() => {

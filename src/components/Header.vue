@@ -48,7 +48,7 @@
 						<v-list-item @click="$router.replace('/my/reserve/')">
 						<v-list-item-title>예약목록</v-list-item-title>
 						</v-list-item>
-						<v-list-item @click="$router.replace('/order/list/')">
+						<v-list-item @click="$router.replace('/my/orderlist/')">
 						<v-list-item-title>주문목록</v-list-item-title>
 						</v-list-item>
 					</v-list>

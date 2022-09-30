@@ -72,6 +72,18 @@
           </div>
         </v-card>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" style="margin-top:10px">
+          <div v-if="bookList.length>9" style="width:100%">
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="minus()"
+              > 이전</v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="plus()"
+              >다음</v-btn>
+            </div>
         <div class="col" v-for="data in bookList" :key="data">
           <div class="card shadow-sm">
             <img class="imageStyle" :src="data.image" style="height:100px;"
@@ -104,16 +116,27 @@ export default {
       image : null,
       id: this.$store.state.user_id ,
       isbn: null,
-      bookList : []
+      bookList : [],
+      start : 1
     };
   },
   methods: {
     move(link){
-      window.location.href = link;
+      window.open(link);
+    },
+     plus(){
+      this.start = this.start + 10;
+      this.bookSearch();
+    },
+    minus(){
+      if(this.start>1){
+        this.start = this.start - 10;
+      }
+      this.bookSearch();
     },
     async bookSearch() {
           let self = this;
-          const URL = "/v1/search/book.json?query="+this.search; /*URL*/
+          const URL = "/v1/search/book.json?query="+this.search+'&start='+this.start; /*URL*/
           const clientId = 'HJDFQYUJdaXSFRCHTTkw';
           const clientSecret = 'Tioo5n28pw';
 

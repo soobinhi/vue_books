@@ -79,8 +79,21 @@
           </div>
         </v-card>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" style="margin-top:10px">
+        <div v-if="bookList.length>9" style="width:100%">
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="minus()"
+            > 이전</v-btn>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="plus()"
+            >다음</v-btn>
+            </div>
         <div class="col" v-for="data in bookList" :key="data">
           <div class="card shadow-sm">
+             
             <img class="imageStyle" :src="data.image" style="height:100px;"
             @click="orderData(data.title,data.author,data.publisher,data.isbn,data.image)"
             >
@@ -113,19 +126,41 @@ export default {
       isbn: null,
       reason: null,
       image:null,
-      bookList : []
+      bookList : [],
+      start: 1,
     };
+  },
+  created(){
+    this.check_order()
   },
   methods: {
     move(link){
-      window.location.href = link;
+      window.open(link);
+    },
+    plus(){
+      this.start = this.start + 10;
+      this.bookSearch();
+    },
+    minus(){
+      if(this.start>1){
+        this.start = this.start - 10;
+      }
+      this.bookSearch();
+    },
+    check_order(){
+       this.$axios.get('http://127.0.0.1:8000/order/check/'+this.$store.state.user_id).then((response) => {
+          console.log(response);  
+          if(response.data.status=='ok'){
+            alert('한달 이내에 주문하신 기록이 있습니다.');
+            this.$router.replace('/my/orderlist/')
+          }
+        })
     },
     async bookSearch() {
           let self = this;
-          const URL = "/v1/search/book.json?query="+this.search; /*URL*/
+          const URL = "/v1/search/book.json?query="+this.search+'&start='+this.start; /*URL*/
           const clientId = 'HJDFQYUJdaXSFRCHTTkw';
           const clientSecret = 'Tioo5n28pw';
-
           this.$axios.get(URL,
               {headers : { 
                           'Accept' : 'application/json',

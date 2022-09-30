@@ -173,6 +173,14 @@ export default {
                 }else{
                   response.data[i].return_date = '-'
                 }
+                let today = new Date();
+                if(today>rent_date){
+                  if(response.data[i].return_date == '-'){
+                    response.data[i].book_id.book_status = '연체중';
+                  }else{
+                    response.data[i].return_date = response.data[i].return_date + ' (연체)'
+                  }
+                }
             }
           this.contents = response.data;
       })
