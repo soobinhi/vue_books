@@ -75,7 +75,7 @@
         <div class="col" v-for="data in bookList" :key="data">
           <div class="card shadow-sm">
             <img class="imageStyle" :src="data.image" style="height:100px;"
-            @click="orderData(data.title,data.author,data.publisher,data.isbn)"
+            @click="orderData(data.title,data.author,data.publisher,data.isbn,data.image)"
             >
             <p class="card-text">{{data.title}}</p>
             <a @click="move(data.link)" href="#">상세보기</a>
@@ -101,6 +101,7 @@ export default {
       search: null,
       title: null,
       author : null,
+      image : null,
       id: this.$store.state.user_id ,
       isbn: null,
       bookList : []
@@ -129,11 +130,12 @@ export default {
             this.bookList = this.bookList.concat(test);
           })
     },
-    orderData(title,author,publisher,isbn){
+    orderData(title,author,publisher,isbn,image){
       this.title=title;
       this.author=author;
       this.publisher=publisher;
       this.isbn=isbn;
+      this.image=image;
     },
     async orderSubmit() {
       let orderData = {};
@@ -142,6 +144,8 @@ export default {
       orderData.publisher=this.publisher;
       orderData.isbn=this.isbn;
       orderData.id=this.isbn;
+      orderData.image = this.image;
+      console.log(orderData);
       try {
         this.$axios
           .post("http://127.0.0.1:8000/book/book/", JSON.stringify(orderData), {

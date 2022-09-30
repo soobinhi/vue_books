@@ -8,6 +8,7 @@ import OrderListView from '../views/OrderListView.vue'
 import AdminOrderListView from '../views/AdminOrderList.vue'
 import BookRegister from '../views/BookRegister.vue'
 import AdminBookRental from '../views/AdminBookRental.vue'
+import AdminBookReserve from '../views/AdminBookReserve.vue'
 import AdminBook from '../views/AdminBook.vue'
 import AdminBookCart from '../views/AdminBookCart.vue'
 import AdminBookDetail from '../views/AdminBookDetail.vue'
@@ -58,6 +59,11 @@ export default new Router({
     path: '/admin/rental',
     name: 'AdminBookRental',
     component: AdminBookRental
+  },
+  {
+    path: '/admin/reserve',
+    name: 'AdminBookReserve',
+    component: AdminBookReserve
   },
   {
     path: '/admin/book',

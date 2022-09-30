@@ -38,8 +38,16 @@
                 <v-row>
                   <v-col
                     cols="12"
-                    sm="12"
-                    md="12"
+                    sm="3"
+                    md="3"
+                  >
+                  <img class="imageStyle" :src="detailItem.image" style="height:120px;"
+                  >  
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="9"
+                    md="9"
                   >
                     <v-text-field
                       v-model="detailItem.title"

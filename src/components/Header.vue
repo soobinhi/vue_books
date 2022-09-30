@@ -77,6 +77,9 @@
 						<v-list-item @click="$router.replace('/admin/rental/')">
 						<v-list-item-title>대여목록관리</v-list-item-title>
 						</v-list-item>
+						<v-list-item @click="$router.replace('/admin/reserve/')">
+						<v-list-item-title>예약현황관리</v-list-item-title>
+						</v-list-item>
 						<v-list-item @click="$router.replace('/admin/orderlist/')">
 						<v-list-item-title>도서주문목록</v-list-item-title>
 						</v-list-item>

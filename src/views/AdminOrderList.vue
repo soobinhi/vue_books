@@ -36,8 +36,16 @@
                 <v-row>
                   <v-col
                     cols="12"
-                    sm="12"
-                    md="12"
+                    sm="3"
+                    md="3"
+                  >
+                  <img class="imageStyle" :src="detailItem.image" style="width:100px;"
+                  >  
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="9"
+                    md="9"
                   >
                     <v-text-field
                       v-model="detailItem.title"
@@ -63,7 +71,7 @@
                     md="6"
                   >
                     <v-text-field
-                      v-model="detailItem.user_id"
+                      v-model="detailItem.name"
                       label="요청자"
                       readonly="readonly" 
                     ></v-text-field>
@@ -99,16 +107,16 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="close"
+                @click="save"
               >
-                취소
+                {{btnvalue}}
               </v-btn>
               <v-btn
                 color="blue darken-1"
                 text
-                @click="save"
+                @click="close"
               >
-                {{btnvalue}}
+                닫기
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -161,7 +169,13 @@
       },
       handleClick(value) {
         this.detailItem = value;
+        this.detailItem.name = value.user_id.name
         this.dialog = true;
+        if(value.order_status=='승인'){
+          this.btnvalue='입고완료'
+        }else{
+          this.btnvalue='승인'
+        }
     },close () {
         this.dialog = false
       },save(){
