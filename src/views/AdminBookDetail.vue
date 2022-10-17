@@ -53,7 +53,7 @@
                   >
                     <v-text-field
                       v-model="detailItem.author"
-                      label="작가"
+                      label="저자"
                       readonly="readonly" 
                     ></v-text-field>
                   </v-col>

@@ -62,7 +62,7 @@
                   >
                     <v-text-field
                       v-model="detailItem.author"
-                      label="작가"
+                      label="저자"
                       readonly="readonly" 
                       
                     ></v-text-field>
@@ -141,7 +141,7 @@
       headers: [
         { text: '도서번호', value: 'id' },
         { text: '제목', value: 'title' },
-        { text: '작가', value: 'author' },
+        { text: '저자', value: 'author' },
         { text: '도서상태', value: 'book_status' }
       ],
       contents:[],

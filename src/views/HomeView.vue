@@ -62,7 +62,7 @@
                   >
                     <v-text-field
                       v-model="detailItem.author"
-                      label="작가"
+                      label="저자"
                       readonly="readonly" 
                       
                     ></v-text-field>
@@ -141,7 +141,7 @@
       headers: [
         { text: '번호', value: 'id' },
         { text: '제목', value: 'title' },
-        { text: '작가', value: 'author' },
+        { text: '저자', value: 'author' },
         { text: '도서상태', value: 'book_status' }
       ],
       contents:[],
@@ -186,7 +186,6 @@
           rentalData.user_id = this.$store.state.user_id;
           rentalData.book_id = this.detailItem.id;
         if(this.btnvalue == '예약'){
-          try {
           this.$axios
             .post("http://127.0.0.1:8000/book/reserve/", JSON.stringify(rentalData), {
               headers: {
@@ -197,14 +196,14 @@
             .then((res) => {
               console.log(res)
               if (res.status === 201) {
-                this.getData()
+                this.getData();
                 alert('예약이 완료되었습니다.');
-                this.dialog = false
+                this.dialog = false;
+              }else{
+                alert('이미 예약하셨습니다.')
               }
             });
-        } catch (error) {
-          console.error(error);
-        }
+        
         }else{
           try {
           this.$axios
@@ -215,6 +214,7 @@
               },
             })
             .then((res) => {
+              
               console.log(res)
               if (res.status === 201) {
                 this.getData()
